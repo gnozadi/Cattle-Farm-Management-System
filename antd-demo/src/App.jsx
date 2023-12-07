@@ -1,11 +1,12 @@
 import React from "react";
-import Login from "./Login/Login";
+
+import  Navbar  from "./Navabr/Navbar";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Navbar/>} />
     </Routes>
   </BrowserRouter>
 );

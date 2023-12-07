@@ -1,8 +1,6 @@
 import React from "react";
 import { Row, Button, Form, Input, Layout, Col } from "antd";
 
-const { Content, Header } = Layout;
-
 const styles = {
   container: {
     backgroundColor: "#e2e2e2",
@@ -27,19 +25,11 @@ const onFinishFailed = (errorInfo) => {
 const Login = () => (
   <div className="container" style={styles.container}>
     <Row justify="space-around" align="middle" style={styles.rowContainer}>
-      <Col>
-        {" "}
-        <img
-          src="src\assets\react.svg"
-          width={25}
-          height={25}
-          className="App=logo"
-          alt="logo"
-        />
-      </Col>
-      <Col>
-        <h1>Cattleision</h1>
-      </Col>
+      <h1>
+        {""}
+        <img src="src/assets/react.svg" alt="Logo" />
+        Cattleision
+      </h1>
     </Row>
     <Row gutter={16} justify="space-around" align="middle">
       <Col span={6} style={styles.formContainer}>

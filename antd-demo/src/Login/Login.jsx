@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { Form, Input, Button, message, Row, Col, Flex, Alert } from "antd";
+import { Form, Input, Button, message, Row, Col, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { FaCow } from "react-icons/fa6";
 import SessionManager from "../Auth/SessionManager";
+import { BASE_URL } from "../config/Config";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const postData = async (type, userData) => {
-    let BaseURL = "https://localhost:5131/";
     let payload = {
       method: "POST",
       headers: {
@@ -20,19 +20,19 @@ const Login = () => {
       body: JSON.stringify(userData),
     };
     try {
-      const response = await fetch(BaseURL + type, payload);
-      const result_1 = await response.json();
-      return result_1;
+      const response = await fetch(BASE_URL + type, payload);
+      const result = await response.json();
+      return result;
     } catch (error) {
-      console.log(error);
+      console.log("error");
     }
   };
 
   const onFinish = (values) => {
     setLoading(true);
-    let userInfo = { values };
+    let userInfo = { userName: values.username, password: values.password };
 
-    postData("api/Auth/Login", userInfo).then((result) => {
+    postData("api/Account/Login", userInfo).then((result) => {
       if (result?.token) {
         SessionManager.setUserSession(
           result.userName,
@@ -46,13 +46,14 @@ const Login = () => {
           navigate("/dashboard");
         }
       } else {
-        console.log("error");
         let errors = "";
         for (const key in result?.errors) {
           if (Object.hasOwnProperty.call(result.errors, key)) {
             errors += result.errors[key];
           }
         }
+
+        console.log(errors);
         errors = errors === "" ? "Login is unsuccessfull!" : errors;
         message.error(errors);
         setLoading(false);

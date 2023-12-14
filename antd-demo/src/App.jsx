@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import Account from "./Account/Account";
 import ConfigPage from "./ConfigPage/ConfigPage";
 import SessionManager from "./Auth/SessionManager";
+import Banyard from "./Barnyard/Barnyard";
 
 const App = () =>
   SessionManager.getToken() ? (
@@ -15,15 +16,17 @@ const App = () =>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/account" element={<Account />} />
         <Route path="/config" element={<ConfigPage />} />
+        <Route path="/barnyards" element={<Banyard />} />
       </Routes>
     </BrowserRouter>
   ) : (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/account" element={<Account />} />
-        <Route path="/config" element={<ConfigPage />} /> */}
+        <Route path="/config" element={<ConfigPage />} />
+        <Route path="/barnyards" element={<Banyard />} />
       </Routes>
     </BrowserRouter>
   );

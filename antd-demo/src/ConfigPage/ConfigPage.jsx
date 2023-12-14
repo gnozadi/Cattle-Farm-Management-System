@@ -1,16 +1,17 @@
 import Navabr from "../Navabr/Navbar";
+import { BASE_URL } from "../config/Config";
 import React, { useState } from "react";
 import {
+  Alert,
   Breadcrumb,
   Form,
   Input,
   InputNumber,
   Layout,
   Popconfirm,
-  Row,
-  Space,
   Table,
   Typography,
+  message,
 } from "antd";
 
 const originData = [];
@@ -61,6 +62,7 @@ const ConfigPage = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState(originData);
   const [editingKey, setEditingKey] = useState("");
+
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
     form.setFieldsValue({
@@ -71,6 +73,25 @@ const ConfigPage = () => {
     });
     setEditingKey(record.key);
   };
+
+  const putData = async (type, userData) => {
+    let payload = {
+      method: "PUT",
+      headers: {
+        // "access-control-allow-origin": "*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    };
+    try {
+      const response = await fetch(BASE_URL + type, payload);
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const cancel = () => {
     setEditingKey("");
   };
@@ -78,14 +99,34 @@ const ConfigPage = () => {
     try {
       const row = await form.validateFields();
       const newData = [...data];
+      console.log("before: ", row);
+
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
         const item = newData[index];
+        console.log("new: ", newData, "Key: ", index);
+
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
-        setData(newData);
+        let d = {
+          number: 0,
+          milkingTime: {
+            hour: 0,
+            minute: 0,
+          },
+          total_Cow_count: 0,
+          id: 0,
+        };
+
+        putData(`api/Barnyards/${index}`, d).then((result) => {
+          if (result.status == 200) {
+            setData(newData);
+          } else {
+            message.error(result.title);
+          }
+        });
         setEditingKey("");
       } else {
         newData.push(row);

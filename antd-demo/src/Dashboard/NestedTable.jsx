@@ -1,7 +1,18 @@
 import React from "react";
 import { Table, Badge, Menu, Dropdown } from "antd";
+import { BASE_URL } from "../config/Config";
 
 function NestedTable() {
+  const getData = async (type, userData) => {
+    let payload = {
+      method: "GET",
+      headers: {
+        "access-control-allow-origin": "*",
+        "Content-Type": "application/json",
+      },
+      // param: ?
+    };
+  };
   const expandedRowRender = () => {
     const columns = [
       { title: "Cow Comfort Index (CCI)", dataIndex: "cci", key: "cci" },

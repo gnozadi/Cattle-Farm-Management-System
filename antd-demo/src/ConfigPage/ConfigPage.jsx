@@ -1,6 +1,6 @@
 import Navabr from "../Navabr/Navbar";
 import { BASE_URL } from "../config/Config";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Breadcrumb,
@@ -15,14 +15,6 @@ import {
 } from "antd";
 
 const originData = [];
-for (let i = 0; i < 10; i++) {
-  originData.push({
-    key: i.toString(),
-    id: `${i}`,
-    cows: 100,
-    milking: `${i}:00`,
-  });
-}
 
 const EditableCell = ({
   editing,
@@ -60,8 +52,9 @@ const EditableCell = ({
 };
 const ConfigPage = () => {
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
+  const [data, setData] = useState();
   const [editingKey, setEditingKey] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
@@ -74,21 +67,43 @@ const ConfigPage = () => {
     setEditingKey(record.key);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(BASE_URL + "api/Barnyards");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const result = await response.json();
+        setData(result);
+        setLoading(false);
+      } catch (error) {
+        console.log("error");
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
   const putData = async (type, userData) => {
     let payload = {
       method: "PUT",
       headers: {
-        // "access-control-allow-origin": "*",
+        "access-control-allow-origin": "*",
         "Content-Type": "application/json",
+        "Accept-Type": "application/json",
       },
       body: JSON.stringify(userData),
     };
     try {
+      console.log("payload", payload);
       const response = await fetch(BASE_URL + type, payload);
-      const result = await response.json();
-      return result;
+      console.log(response);
+      return response;
     } catch (error) {
-      console.log(error);
+      console.log("error");
     }
   };
 
@@ -104,27 +119,22 @@ const ConfigPage = () => {
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
         const item = newData[index];
-        console.log("new: ", newData, "Key: ", index);
-
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
         let d = {
-          number: 0,
-          milkingTime: {
-            hour: 0,
-            minute: 0,
-          },
-          total_Cow_count: 0,
-          id: 0,
+          number: Number(newData[index].id),
+          milkingTime: row.milkingTime,
+          total_Cow_count: row.total_Cow_count,
+          id: index + 1,
         };
-
-        putData(`api/Barnyards/${index}`, d).then((result) => {
+        putData(`api/Barnyards/${index + 1}`, d).then((result) => {
           if (result.status == 200) {
+            message.success("changed successfully!");
             setData(newData);
           } else {
-            message.error(result.title);
+            message.error(result.status);
           }
         });
         setEditingKey("");
@@ -139,20 +149,23 @@ const ConfigPage = () => {
   };
   const columns = [
     {
+      // id
       title: "Barnyard #",
-      dataIndex: "id",
+      dataIndex: "number",
       width: "25%",
       editable: false,
     },
     {
+      //total_Cow_count
       title: "Number of Cows",
-      dataIndex: "cows",
+      dataIndex: "total_Cow_count",
       width: "15%",
       editable: true,
     },
     {
+      // milkingTime
       title: "Milking Time",
-      dataIndex: "milking",
+      dataIndex: "milkingTime",
       width: "40%",
       editable: true,
     },
@@ -235,6 +248,7 @@ const ConfigPage = () => {
                   dataSource={data}
                   columns={mergedColumns}
                   rowClassName="editable-row"
+                  loading={loading}
                 />
               </Form>
             </Layout>

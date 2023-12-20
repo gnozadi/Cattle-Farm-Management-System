@@ -2,7 +2,6 @@ import Navabr from "../Navabr/Navbar";
 import { BASE_URL } from "../config/Config";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
   Breadcrumb,
   Form,
   Input,
@@ -13,8 +12,6 @@ import {
   Typography,
   message,
 } from "antd";
-
-const originData = [];
 
 const EditableCell = ({
   editing,
@@ -56,7 +53,7 @@ const ConfigPage = () => {
   const [editingKey, setEditingKey] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const isEditing = (record) => record.key === editingKey;
+  const isEditing = (record) => record.id === editingKey;
   const edit = (record) => {
     form.setFieldsValue({
       name: "",
@@ -64,7 +61,7 @@ const ConfigPage = () => {
       address: "",
       ...record,
     });
-    setEditingKey(record.key);
+    setEditingKey(record.id);
   };
 
   useEffect(() => {
@@ -88,6 +85,7 @@ const ConfigPage = () => {
   }, []);
 
   const putData = async (type, userData) => {
+    console.log(type, userData);
     let payload = {
       method: "PUT",
       headers: {
@@ -111,12 +109,13 @@ const ConfigPage = () => {
     setEditingKey("");
   };
   const save = async (key) => {
+    console.log("key", key);
     try {
       const row = await form.validateFields();
       const newData = [...data];
       console.log("before: ", row);
 
-      const index = newData.findIndex((item) => key === item.key);
+      const index = newData.findIndex((item) => key === item.id);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
@@ -124,12 +123,13 @@ const ConfigPage = () => {
           ...row,
         });
         let d = {
-          number: Number(newData[index].id),
+          number: Number(item.id),
           milkingTime: row.milkingTime,
           total_Cow_count: row.total_Cow_count,
-          id: index + 1,
+          id: item.id,
         };
-        putData(`api/Barnyards/${index + 1}`, d).then((result) => {
+        console.log("x: ", item);
+        putData(`api/Barnyards/${item.id}`, d).then((result) => {
           if (result.status == 200) {
             message.success("changed successfully!");
             setData(newData);
@@ -177,7 +177,7 @@ const ConfigPage = () => {
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.key)}
+              onClick={() => save(record.id)}
               style={{
                 marginRight: 8,
               }}
@@ -207,7 +207,8 @@ const ConfigPage = () => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === "cows" ? "number" : "text",
+        inputType: "text",
+        // col.dataIndex === "milkingTime" ? "text" : "number",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),

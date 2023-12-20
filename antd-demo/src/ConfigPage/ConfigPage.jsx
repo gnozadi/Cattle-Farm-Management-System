@@ -74,7 +74,11 @@ const ConfigPage = () => {
           throw new Error("Failed to fetch data");
         }
         const result = await response.json();
-        setData(result);
+        const dataWithKeys = result.map((record, index) => ({
+          ...record,
+          key: index.toString(),
+        }));
+        setData(dataWithKeys);
         setLoading(false);
       } catch (error) {
         console.log("error");
@@ -85,7 +89,7 @@ const ConfigPage = () => {
   }, []);
 
   const putData = async (type, userData) => {
-    console.log(type, userData);
+    // console.log(type, userData);
     let payload = {
       method: "PUT",
       headers: {
@@ -96,9 +100,9 @@ const ConfigPage = () => {
       body: JSON.stringify(userData),
     };
     try {
-      console.log("payload", payload);
+      // console.log("payload", payload);
       const response = await fetch(BASE_URL + type, payload);
-      console.log(response);
+      // console.log(response);
       return response;
     } catch (error) {
       console.log("error");
@@ -109,11 +113,10 @@ const ConfigPage = () => {
     setEditingKey("");
   };
   const save = async (key) => {
-    console.log("key", key);
+    // console.log("key", key);
     try {
       const row = await form.validateFields();
       const newData = [...data];
-      console.log("before: ", row);
 
       const index = newData.findIndex((item) => key === item.id);
       if (index > -1) {
@@ -128,7 +131,7 @@ const ConfigPage = () => {
           total_Cow_count: row.total_Cow_count,
           id: item.id,
         };
-        console.log("x: ", item);
+
         putData(`api/Barnyards/${item.id}`, d).then((result) => {
           if (result.status == 200) {
             message.success("changed successfully!");

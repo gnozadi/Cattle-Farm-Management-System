@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Badge, Menu, Dropdown } from "antd";
+import { Table } from "antd";
 import { BASE_URL } from "../config/Config";
-import { DownOutlined } from "@ant-design/icons";
 
 function NestedTable() {
   const [data, setData] = useState("");
@@ -11,7 +10,8 @@ function NestedTable() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(BASE_URL + "api/Barnyards");
+        // const response = await fetch(BASE_URL + "api/Barnyards");
+        const response = await fetch(BASE_URL + "api/Barnyards/dashboard2");
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -51,9 +51,19 @@ function NestedTable() {
   };
 
   const columns = [
-    { title: "Barnyard #", dataIndex: "number", key: "id" },
+    {
+      title: "Barnyard #",
+
+      dataIndex: "number",
+      key: "id",
+    },
     { title: "Number of Cows", dataIndex: "total_Cow_count", key: "cows" },
-    { title: "Last Report Date", dataIndex: "reportDate", key: "lastReport" },
+    {
+      title: "Last Report Date",
+      // dataIndex: "reportDate",
+      dataIndex: "lastReport",
+      key: "lastReport",
+    },
   ];
 
   return (
@@ -62,7 +72,6 @@ function NestedTable() {
       columns={columns}
       expandable={{
         expandedRowRender,
-        defaultExpandedRowKeys: ["0"],
       }}
       dataSource={data}
       scroll={{ y: true }}

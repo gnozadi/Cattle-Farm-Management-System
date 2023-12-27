@@ -1,5 +1,5 @@
 import Navabr from "../Navabr/Navbar";
-import { BASE_URL } from "../config/Config";
+import { BARNYARDS_ENDPOINT_URL, BASE_URL } from "../config/Config";
 import React, { useEffect, useState } from "react";
 import {
   Breadcrumb,
@@ -55,6 +55,7 @@ const ConfigPage = () => {
 
   const isEditing = (record) => record.id === editingKey;
   const edit = (record) => {
+    // console.log(record);
     form.setFieldsValue({
       name: "",
       age: "",
@@ -68,7 +69,7 @@ const ConfigPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(BASE_URL + "api/Barnyards");
+        const response = await fetch(BASE_URL + BARNYARDS_ENDPOINT_URL);
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -78,6 +79,7 @@ const ConfigPage = () => {
           ...record,
           key: index.toString(),
         }));
+        // console.log(dataWithKeys);
         setData(dataWithKeys);
         setLoading(false);
       } catch (error) {
@@ -132,8 +134,10 @@ const ConfigPage = () => {
           id: item.id,
         };
 
-        putData(`api/Barnyards/${item.id}`, d).then((result) => {
-          if (result.status == 200) {
+        console.log(d);
+
+        putData(BARNYARDS_ENDPOINT_URL + `/${item.id}`, d).then((result) => {
+          if (result.status >= 200 && result.status <= 300) {
             message.success("changed successfully!");
             setData(newData);
           } else {

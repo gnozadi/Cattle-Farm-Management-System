@@ -7,6 +7,7 @@ import Account from "./Account/Account";
 import ConfigPage from "./ConfigPage/ConfigPage";
 import SessionManager from "./Auth/SessionManager";
 import Banyard from "./Barnyard/Barnyard";
+import Camera from "./Camera/camera";
 
 const App = () =>
   SessionManager.getToken() ? (
@@ -17,6 +18,7 @@ const App = () =>
         <Route path="/account" element={<Account />} />
         <Route path="/config" element={<ConfigPage />} />
         <Route path="/barnyards" element={<Banyard />} />
+        <Route path="/cameras" element={<Camera />} />
       </Routes>
     </BrowserRouter>
   ) : (
@@ -27,6 +29,7 @@ const App = () =>
         <Route path="/account" element={<Account />} />
         <Route path="/config" element={<ConfigPage />} />
         <Route path="/barnyards" element={<Banyard />} />
+        <Route path="/cameras" element={<Camera />} />
       </Routes>
     </BrowserRouter>
   );
